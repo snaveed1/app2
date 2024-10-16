@@ -29,8 +29,8 @@ jobs:
         with:
           create_credentials_file: true
           token_format: access_token
-          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER_NPROD }}/locations/global/workloadIdentityPools/github-actions-1/providers/github-actions"
-          service_account: "wif-sa@${{ secrets.GCP_PROJECT_ID_NPROD }}.iam.gserviceaccount.com"
+          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions-1/providers/github-actions"
+          service_account: "wif-sa@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
       # Step 4: Configure Docker to use gcloud as a credential helper for Artifact Registry
       - name: Configure Docker for Artifact Registry
@@ -41,7 +41,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Define the image name
-          image="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID_NPROD }}/apps-images/snaveed1/app2:${{ env.IMAGE_TAG }}"
+          image="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/apps-images/snaveed1/app2:${{ env.IMAGE_TAG }}"
 
           # Build the Docker image
           docker build -t "$image" "."
