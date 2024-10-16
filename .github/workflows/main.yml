@@ -1,0 +1,50 @@
+name: CI - Build and Push to Artifact Registry
+
+on:
+  push:
+    branches:
+      - main  # Trigger the CI on push to the main branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set environment variable for the image tag
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
+      # Step 3: Authenticate to Google Cloud using Workload Identity Federation
+      - id: 'auth'
+        name: 'Obtain access token by using Workload Identity Federation'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          create_credentials_file: true
+          token_format: access_token
+          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER_NPROD }}/locations/global/workloadIdentityPools/github-actions-1/providers/github-actions"
+          service_account: "wif-sa@${{ secrets.GCP_PROJECT_ID_NPROD }}.iam.gserviceaccount.com"
+
+      # Step 4: Configure Docker to use gcloud as a credential helper for Artifact Registry
+      - name: Configure Docker for Artifact Registry
+        run: |
+          echo "${{ steps.auth.outputs.access_token }}" | docker login -u oauth2accesstoken --password-stdin us-central1-docker.pkg.dev
+
+      # Step 5: Build and push Docker image for app2 to Artifact Registry
+      - name: Build and Push Docker Image
+        run: |
+          # Define the image name
+          image="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID_NPROD }}/apps-images/snaveed1/app2:${{ env.IMAGE_TAG }}"
+
+          # Build the Docker image
+          docker build -t "$image" "."
+
+          # Push the Docker image
+          docker push "$image"
