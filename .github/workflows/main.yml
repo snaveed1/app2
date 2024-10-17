@@ -41,7 +41,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Define the image name
-          image="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/apps-images/snaveed1/app2:${{ env.IMAGE_TAG }}"
+          image="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/apps-images/app2:${{ env.IMAGE_TAG }}"
 
           # Build the Docker image
           docker build -t "$image" "."
