@@ -60,7 +60,7 @@ jobs:
           git config user.email "shaikhnaved10346@gmail.com"
 
           # Set image name in app2values.yml
-          yq e '.image.name = "${{ secrets.GCP_GAR_HOST }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPO }}/${{ secrets.GCP_IMAGE_NAME }}"' -i app2/ap2values.yml
+          yq e '.image.name = "${{ secrets.GCP_GAR_HOST }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_REPO }}/${{ secrets.GCP_IMAGE_NAME }}"' -i app2/app2values.yml
 
           # Set image tag to the commit ID in app2values.yml
           yq e '.image.tag = "${{ github.sha }}"' -i app2/app2values.yml  # Use commit ID as tag
